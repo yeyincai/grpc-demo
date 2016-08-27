@@ -18,8 +18,8 @@ gRPC is a modern open source high performance RPC framework that can run in any 
 ![image](http://www.grpc.io/grpc.github.io/img/landing-2.svg)
 
 ### Learning materials
-[![grpc-java]](https://github.com/grpc/grpc-java)
+[grpc-java](https://github.com/grpc/grpc-java)
 
-[![grpc-home]](http://www.grpc.io/)
+[grpc-home](http://www.grpc.io/)
 
-[![grpc-chines]](http://doc.oschina.net/grpc?t=60134/)
+[grpc-chines](http://doc.oschina.net/grpc?t=60134/)
