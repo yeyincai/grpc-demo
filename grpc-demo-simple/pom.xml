@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<artifactId>com.yyc.grpc</artifactId>
-        <groupId>grpc-demo-simple</groupId>
-        <version>1.0.0</version>
+		<groupId>com.yyc.grpc</groupId>
+		<artifactId>grpc-demo</artifactId>
+		<version>1.0.0</version>
 	</parent>
     <groupId>com.yyc.grpc</groupId>
     <artifactId>grpc-demo-simple</artifactId>
@@ -24,15 +24,5 @@
 			<version>${grpc.version}</version>
 		</dependency>
 	</dependencies>
-
-
-    <build>
-		<plugins>
-			<plugin>
-				<groupId>org.xolstice.maven.plugins</groupId>
-				<artifactId>protobuf-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-    </build>
 
 </project>
