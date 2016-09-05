@@ -1,6 +1,8 @@
 .*
 !.gitignore
-target/
+target
+WebContent
+*.log
 *.iml
-logs/
 *.versionsBackup
+logs
