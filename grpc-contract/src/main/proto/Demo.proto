@@ -12,9 +12,19 @@ package com.yyc.grpc.contract;
 service SimpleService {
     //request or response must be message
     rpc SayHello(google.protobuf.StringValue) returns(SayHelloResponse);
+
+    //request get all response
+    rpc GetAll(google.protobuf.Empty)returns(stream GetAllResponse);
 }
 
 message SayHelloResponse{
     string result = 1;
 }
 
+message GetAllResponse{
+    oneof index_oneof {
+        string member1 = 1;
+        int32 member2 = 2;
+        string member3 = 3;
+    }
+}

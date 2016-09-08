@@ -1,12 +1,13 @@
-package com.grpc.demo.simple;
+package com.grpc.demo.oneof;
 
 
-import com.google.protobuf.StringValue;
-import com.yyc.grpc.contract.SayHelloResponse;
+import com.google.protobuf.Empty;
+import com.yyc.grpc.contract.GetAllResponse;
 import com.yyc.grpc.contract.SimpleServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.netty.NettyChannelBuilder;
 
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 public class SimpleClientStart {
@@ -33,8 +34,15 @@ public class SimpleClientStart {
         simpleClientStart.createChannel();
         SimpleServiceGrpc.SimpleServiceBlockingStub simpleServiceStub = SimpleServiceGrpc.newBlockingStub(simpleClientStart.managedChannel);
 
-        SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-simple-demo").build());
-        System.out.println("response:"+sayHelloResponse.getResult());
+        Long start = System.currentTimeMillis();
+        Iterator<GetAllResponse> all = simpleServiceStub.getAll(Empty.getDefaultInstance());
+        while (all.hasNext()) {
+            GetAllResponse response = all.next();
+            System.out.println("response:"+response);
+        }
+        //this time <3 second
+        System.out.println("spend time :"+(System.currentTimeMillis()-start));
+
         simpleClientStart.shutdown();
     }
 }

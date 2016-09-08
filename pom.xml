@@ -33,6 +33,7 @@
 		<module>grpc-contract</module>
 		<module>grpc-demo-simple</module>
 		<module>grpc-demo-encryption</module>
+		<module>grpc-demo-oneof</module>
 	</modules>
 
 	<build>
