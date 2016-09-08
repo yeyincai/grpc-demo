@@ -33,6 +33,8 @@ public class SimpleClientStart {
         } catch (SSLException e) {
             e.printStackTrace();
         }
+        //Mind :this the set  host=waterzooi.test.google.be ,cause CA defined,
+        // so C:\Windows\System32\drivers\etc\hosts append 127.0.0.1  waterzooi.test.google.be
         managedChannel = NettyChannelBuilder.forAddress("waterzooi.test.google.be",PORT)
                 .negotiationType(NegotiationType.TLS)
                 .sslContext(sslContext).build();
