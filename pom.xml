@@ -35,6 +35,7 @@
 		<module>grpc-demo-encryption</module>
 		<module>grpc-demo-oneof</module>
 		<module>grpc-demo-stream</module>
+		<module>grpc-demo-interceptor</module>
 	</modules>
 
 	<build>
