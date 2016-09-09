@@ -15,6 +15,9 @@ service SimpleService {
 
     //request get all response
     rpc GetAll(google.protobuf.Empty)returns(stream GetAllResponse);
+
+    //client and server instant messenger
+    rpc WeChat(stream WeChatRequest)returns(stream WeChatResponse);
 }
 
 message SayHelloResponse{
@@ -27,4 +30,11 @@ message GetAllResponse{
         int32 member2 = 2;
         string member3 = 3;
     }
+}
+
+message WeChatRequest{
+    string request = 1;
+}
+message WeChatResponse{
+    string response = 1;
 }

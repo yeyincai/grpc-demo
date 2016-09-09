@@ -34,6 +34,7 @@
 		<module>grpc-demo-simple</module>
 		<module>grpc-demo-encryption</module>
 		<module>grpc-demo-oneof</module>
+		<module>grpc-demo-stream</module>
 	</modules>
 
 	<build>
