@@ -12,6 +12,10 @@
 
 6.Add client and server interceptor
 
+7.How to using NameResovler
+
+8.How to using RoundRobinLoadBalancer
+
 
 ## Introduction   grpc
 
