@@ -1,4 +1,4 @@
-package com.grpc.demo.oneof;
+package com.grpc.demo.nameResolver;
 
 
 import com.google.protobuf.StringValue;
@@ -6,16 +6,20 @@ import com.yyc.grpc.contract.SayHelloResponse;
 import com.yyc.grpc.contract.SimpleServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.netty.NettyChannelBuilder;
+import io.grpc.util.RoundRobinLoadBalancerFactory;
 
 import java.util.concurrent.TimeUnit;
 
 public class SimpleClientStart {
 
     private ManagedChannel managedChannel;
-    private int PORT = 8888;
 
     private void createChannel(){
-        managedChannel = NettyChannelBuilder.forAddress("localhost",PORT).usePlaintext(true).build();
+        managedChannel = NettyChannelBuilder
+                .forTarget("server://127.0.0.1:9999,127.0.0.1:8888")
+                .nameResolverFactory(new ServerNameResolverProvider())
+                .loadBalancerFactory(RoundRobinLoadBalancerFactory.getInstance())
+                .usePlaintext(true).build();
     }
 
     private void shutdown(){
@@ -28,13 +32,16 @@ public class SimpleClientStart {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         SimpleClientStart simpleClientStart = new SimpleClientStart();
         simpleClientStart.createChannel();
         SimpleServiceGrpc.SimpleServiceBlockingStub simpleServiceStub = SimpleServiceGrpc.newBlockingStub(simpleClientStart.managedChannel);
 
-        SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-nameResolver-demo").build());
-        System.out.println("response:"+sayHelloResponse.getResult());
+        for (int i=0;i<100;i++) {
+            SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-nameResolver-demo").build());
+            System.out.println("response:" + sayHelloResponse.getResult());
+            TimeUnit.SECONDS.sleep(1);
+        }
         simpleClientStart.shutdown();
     }
 }

@@ -40,7 +40,7 @@ public class SimpleClientStart {
         Metadata metadata = new Metadata();
         metadata.put(Metadata.Key.of("extendKey", Metadata.ASCII_STRING_MARSHALLER), "extendValue");
         MetadataUtils.attachHeaders(simpleServiceStub,metadata);
-        SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-oneof-demo").build());
+        SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-nameResolver-demo").build());
         System.out.println("response:"+sayHelloResponse.getResult());
         simpleClientStart.shutdown();
     }

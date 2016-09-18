@@ -36,6 +36,7 @@
 		<module>grpc-demo-oneof</module>
 		<module>grpc-demo-stream</module>
 		<module>grpc-demo-interceptor</module>
+		<module>grpc-demo-nameResolver</module>
 	</modules>
 
 	<build>
