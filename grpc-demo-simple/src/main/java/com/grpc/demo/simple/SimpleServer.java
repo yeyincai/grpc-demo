@@ -1,4 +1,4 @@
-package com.grpc.demo.oneof;
+package com.grpc.demo.simple;
 
 import com.yyc.grpc.contract.SayHelloResponse;
 import com.yyc.grpc.contract.SimpleServiceGrpc;

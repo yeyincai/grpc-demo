@@ -1,4 +1,4 @@
-package com.grpc.demo.oneof;
+package com.grpc.demo.simple;
 
 
 import io.grpc.Server;

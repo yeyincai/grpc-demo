@@ -1,4 +1,4 @@
-package com.grpc.demo.oneof;
+package com.grpc.demo.simple;
 
 
 import com.google.protobuf.StringValue;
@@ -33,7 +33,7 @@ public class SimpleClientStart {
         simpleClientStart.createChannel();
         SimpleServiceGrpc.SimpleServiceBlockingStub simpleServiceStub = SimpleServiceGrpc.newBlockingStub(simpleClientStart.managedChannel);
 
-        SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-nameResolver-demo").build());
+        SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-simple-demo").build());
         System.out.println("response:"+sayHelloResponse.getResult());
         simpleClientStart.shutdown();
     }

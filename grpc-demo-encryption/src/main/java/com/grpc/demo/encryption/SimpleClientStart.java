@@ -55,7 +55,7 @@ public class SimpleClientStart {
         simpleClientStart.createChannel();
         SimpleServiceGrpc.SimpleServiceBlockingStub simpleServiceStub = SimpleServiceGrpc.newBlockingStub(simpleClientStart.managedChannel);
 
-        SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-oneof-demo").build());
+        SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-encryption-demo").build());
         System.out.println("response:"+sayHelloResponse.getResult());
         simpleClientStart.shutdown();
     }
