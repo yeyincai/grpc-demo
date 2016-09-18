@@ -29,3 +29,5 @@ gRPC is a modern open source high performance RPC framework that can run in any 
 [grpc-home](http://www.grpc.io/)
 
 [grpc-chines](http://doc.oschina.net/grpc?t=60134/)
+
+[grpc-learning](https://skyao.gitbooks.io/leaning-grpc/content/)  thanks  @skyao 
