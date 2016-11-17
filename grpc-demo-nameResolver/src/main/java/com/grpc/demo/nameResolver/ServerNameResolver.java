@@ -100,12 +100,15 @@ public class ServerNameResolver extends NameResolver {
 
                     List<List<ResolvedServerInfo>> serversList = new ArrayList<>();
 
+                    List<ResolvedServerInfo> var25 = new ArrayList(inetSocketAddresses.length);
                     for (int var6 = 0; var6 < inetSocketAddresses.length; ++var6) {
-                        List<ResolvedServerInfo> var25 = new ArrayList(inetSocketAddresses.length);
                         InetSocketAddress inetSocketAddress = inetSocketAddresses[var6];
                         var25.add(new ResolvedServerInfo(new InetSocketAddress(inetSocketAddress.getHostName(), inetSocketAddress.getPort()), Attributes.EMPTY));
-                        serversList.add(var25);
+
                     }
+                    serversList.add(var25);
+                    List<ResolvedServerInfo> var26 =var25;
+                    serversList.add(var26);
                     savedListener.onUpdate(serversList, Attributes.EMPTY);
                 }
             } finally {

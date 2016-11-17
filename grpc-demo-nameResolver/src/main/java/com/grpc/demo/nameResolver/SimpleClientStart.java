@@ -32,15 +32,22 @@ public class SimpleClientStart {
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         SimpleClientStart simpleClientStart = new SimpleClientStart();
         simpleClientStart.createChannel();
         SimpleServiceGrpc.SimpleServiceBlockingStub simpleServiceStub = SimpleServiceGrpc.newBlockingStub(simpleClientStart.managedChannel);
 
         for (int i=0;i<100;i++) {
+
             SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-nameResolver-demo").build());
             System.out.println("response:" + sayHelloResponse.getResult());
-            TimeUnit.SECONDS.sleep(1);
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e){
+
+
+            }
+
         }
         simpleClientStart.shutdown();
     }
