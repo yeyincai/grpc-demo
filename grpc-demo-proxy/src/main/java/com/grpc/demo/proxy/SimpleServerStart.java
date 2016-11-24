@@ -1,7 +1,6 @@
-package com.grpc.demo.oneof;
+package com.grpc.demo.proxy;
 
 
-import com.grpc.demo.oneof.parseq.ParseqSimpleServer;
 import io.grpc.Server;
 import io.grpc.netty.NettyServerBuilder;
 
@@ -13,11 +12,7 @@ public class SimpleServerStart {
     private Server server;
 
     private void start() throws Exception{
-       // server = NettyServerBuilder.forPort(PORT).addService(new SimpleServer().bindService()).build();
-        server = NettyServerBuilder.forPort(PORT).addService(new ParseqSimpleServer().bindService()).build();
-        //server = NettyServerBuilder.forPort(PORT).addService(new FutureSimpleServer().bindService()).build();
-        //server = NettyServerBuilder.forPort(PORT).addService(new FutureThreadPoolSimpleServer().bindService()).build();
-
+        server = NettyServerBuilder.forPort(PORT).addService(new SimpleServer().bindService()).build();
         server.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(){
@@ -41,7 +36,7 @@ public class SimpleServerStart {
     public static void main(String[] args) throws Exception {
         final SimpleServerStart simpleServerStart = new SimpleServerStart();
         simpleServerStart.start();
-        TimeUnit.SECONDS.sleep(300);
+        TimeUnit.SECONDS.sleep(3000);
     }
 
 }

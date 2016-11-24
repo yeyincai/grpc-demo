@@ -1,19 +1,18 @@
-package com.grpc.demo.oneof;
+package com.grpc.demo.proxy;
 
 
-import com.google.protobuf.Empty;
-import com.yyc.grpc.contract.GetAllResponse;
+import com.google.protobuf.StringValue;
+import com.yyc.grpc.contract.SayHelloResponse;
 import com.yyc.grpc.contract.SimpleServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.netty.NettyChannelBuilder;
 
-import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 public class SimpleClientStart {
 
     private ManagedChannel managedChannel;
-    private int PORT = 8888;
+    private int PORT = 8080;
 
     private void createChannel(){
         managedChannel = NettyChannelBuilder.forAddress("localhost",PORT).usePlaintext(true).build();
@@ -29,26 +28,26 @@ public class SimpleClientStart {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         SimpleClientStart simpleClientStart = new SimpleClientStart();
         simpleClientStart.createChannel();
         SimpleServiceGrpc.SimpleServiceBlockingStub simpleServiceStub = SimpleServiceGrpc.newBlockingStub(simpleClientStart.managedChannel);
 
-        Long start = System.currentTimeMillis();
+        for (int i = 0; i < 2; i++) {
+            new Thread(()->{
+                while (true) {
+                    SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-simple-demo").build());
+                    System.out.println("response:" + sayHelloResponse.getResult());
+                    try {
+                        TimeUnit.SECONDS.sleep(2);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
 
-        SimpleExecutor simpleExecutor = new SimpleExecutor(()->{
-            Iterator<GetAllResponse> all = simpleServiceStub.getAll(Empty.getDefaultInstance());
-            while (all.hasNext()) {
-                GetAllResponse response = all.next();
-                //System.out.println("response:"+response);
-            }
-        });
 
-        simpleExecutor.execute(100,30);
 
-        //this time <3 second
-        System.out.println("spend time :"+(System.currentTimeMillis()-start));
-
-        simpleClientStart.shutdown();
     }
 }

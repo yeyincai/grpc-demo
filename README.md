@@ -16,6 +16,8 @@
 
 8.How to using RoundRobinLoadBalancer
 
+9.Using grpc proxy
+
 
 ## Introduction   grpc
 

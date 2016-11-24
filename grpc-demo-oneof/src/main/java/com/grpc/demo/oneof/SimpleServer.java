@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SimpleServer extends SimpleServiceGrpc.SimpleServiceImplBase{
 
-    private final static ExecutorService executors = Executors.newFixedThreadPool(3);
+    private final static ExecutorService executors = Executors.newCachedThreadPool();
 
     public void getAll(com.google.protobuf.Empty request,
                        io.grpc.stub.StreamObserver<com.yyc.grpc.contract.GetAllResponse> responseObserver) {
@@ -21,7 +21,7 @@ public class SimpleServer extends SimpleServiceGrpc.SimpleServiceImplBase{
             @Override
             GetAllResponse invoke() {
                 try {
-                    TimeUnit.SECONDS.sleep(1);
+                    TimeUnit.MILLISECONDS.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -33,7 +33,7 @@ public class SimpleServer extends SimpleServiceGrpc.SimpleServiceImplBase{
             @Override
             GetAllResponse invoke() {
                 try {
-                    TimeUnit.SECONDS.sleep(1);
+                    TimeUnit.MILLISECONDS.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -45,7 +45,7 @@ public class SimpleServer extends SimpleServiceGrpc.SimpleServiceImplBase{
             @Override
             GetAllResponse invoke() {
                 try {
-                    TimeUnit.SECONDS.sleep(1);
+                    TimeUnit.MILLISECONDS.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -59,7 +59,7 @@ public class SimpleServer extends SimpleServiceGrpc.SimpleServiceImplBase{
             e.printStackTrace();
         }
         responseObserver.onCompleted();
-        System.out.println("---------------------onCompleted ");
+        //System.out.println("---------------------onCompleted ");
     }
 
 }
