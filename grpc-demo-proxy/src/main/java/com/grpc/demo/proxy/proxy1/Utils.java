@@ -1,14 +1,14 @@
 package com.grpc.demo.proxy.proxy1;
 
+import com.grpc.demo.proxy.FrameEntity;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http2.*;
 
 import static io.netty.buffer.ByteBufUtil.appendPrettyHexDump;
-import static io.netty.handler.codec.http2.Http2CodecUtil.readUnsignedInt;
-import static io.netty.handler.codec.http2.Http2Error.ENHANCE_YOUR_CALM;
-import static io.netty.handler.codec.http2.Http2Error.FRAME_SIZE_ERROR;
+import static io.netty.handler.codec.http2.Http2CodecUtil.*;
+import static io.netty.handler.codec.http2.Http2Error.*;
 import static io.netty.handler.codec.http2.Http2Exception.connectionError;
 import static io.netty.handler.codec.http2.Http2Exception.streamError;
 import static io.netty.util.internal.StringUtil.NEWLINE;
@@ -18,8 +18,10 @@ import static io.netty.util.internal.StringUtil.NEWLINE;
  */
 public class Utils {
 
-    public static String formatByteBuf(ChannelHandlerContext ctx, String eventName, ByteBuf msg) {
-        String chStr = ctx.channel().toString();
+    public static final String UPGRADE_RESPONSE_HEADER = "http-to-http2-upgrade";
+
+    public static String formatByteBuf(String eventName, ByteBuf msg) {
+        String chStr = "cxf:";
         int length = msg.readableBytes();
         if (length == 0) {
             StringBuilder buf = new StringBuilder(chStr.length() + 1 + eventName.length() + 4);
@@ -39,23 +41,28 @@ public class Utils {
 
     private static final Http2HeadersDecoder headersDecoder = new DefaultHttp2HeadersDecoder(true);
 
-    public static Http2Headers readHeadersFrame(final ChannelHandlerContext ctx, ByteBuf byteBuf) throws Http2Exception {
+    public static FrameEntity decodeFrameEntity(ByteBuf byteBuf) {
+        final FrameEntity frameEntity = new FrameEntity();
 
-        int payloadLength = byteBuf.readUnsignedMedium();
-        byte frameType = byteBuf.readByte();
-        Http2Flags flags = new Http2Flags(byteBuf.readUnsignedByte());
-        int streamId = readUnsignedInt(byteBuf);
-        System.out.println("header    streamId:"+streamId);
+        final int payloadLength = byteBuf.readUnsignedMedium();
+        final byte frameType = byteBuf.readByte();
+        final Http2Flags flags = new Http2Flags(byteBuf.readUnsignedByte());
+        final int streamId = readUnsignedInt(byteBuf);
+        final ByteBuf payload = byteBuf.readSlice(payloadLength);
 
-        ByteBuf payload = byteBuf.readSlice(payloadLength);
+        frameEntity.setPayloadLength(payloadLength);
+        frameEntity.setFrameType(frameType);
+        frameEntity.setFlags(flags);
+        frameEntity.setStreamId(streamId);
+        frameEntity.setPayload(payload);
+        return frameEntity;
+    }
 
-        final int padding;
-        if (!flags.paddingPresent()) {
-            padding =  0;
-        }
-        else {
-            padding = payload.readUnsignedByte() + 1;
-        }
+    public static Http2Headers readHeadersFrame(final ChannelHandlerContext ctx, FrameEntity frameEntity) throws Http2Exception {
+
+        final ByteBuf payload = frameEntity.getPayload().copy();
+        final Http2Flags flags = frameEntity.getFlags();
+        final int padding = getPadding(flags.paddingPresent(), payload);
 
         if (flags.priorityPresent()) {
             long word1 = payload.readUnsignedInt();
@@ -63,40 +70,23 @@ public class Utils {
             final int streamDependency = (int) (word1 & 0x7FFFFFFFL);
             final short weight = (short) (payload.readUnsignedByte() + 1);
             final ByteBuf fragment = payload.readSlice(lengthWithoutTrailingPadding(payload.readableBytes(), padding));
-
-
             final HeadersBlockBuilder hdrBlockBuilder = new HeadersBlockBuilder();
             hdrBlockBuilder.addFragment(fragment, ctx.alloc(), flags.endOfHeaders());
-            return  hdrBlockBuilder.headers();
+            return hdrBlockBuilder.headers();
 
         }
         return null;
     }
 
 
-    public static String readDataFrame( ByteBuf byteBuf) throws Http2Exception {
-        int payloadLength = byteBuf.readUnsignedMedium();
-        byte frameType = byteBuf.readByte();
-        Http2Flags flags = new Http2Flags(byteBuf.readUnsignedByte());
-        int streamId = readUnsignedInt(byteBuf);
-
-        System.out.println("data    streamId:"+streamId);
-
-        ByteBuf payload = byteBuf.readSlice(payloadLength);
-
-
-        final int padding;
-        if (!flags.paddingPresent()) {
-            padding =  0;
-        }
-        else {
-            padding = payload.readUnsignedByte() + 1;
-        }
+    public static String readDataFrame(FrameEntity frameEntity) throws Http2Exception {
+        final ByteBuf payload = frameEntity.getPayload().copy();
+        final Http2Flags flags = frameEntity.getFlags();
+        final int padding = getPadding(flags.paddingPresent(), payload);
 
         int dataLength = lengthWithoutTrailingPadding(payload.readableBytes(), padding);
         if (dataLength < 0) {
-            throw streamError(streamId, FRAME_SIZE_ERROR,
-                    "Frame payload too small for padding.");
+            throw streamError(frameEntity.getStreamId(), FRAME_SIZE_ERROR, "Frame payload too small for padding.");
         }
 
         ByteBuf data = payload.readSlice(dataLength);
@@ -104,6 +94,39 @@ public class Utils {
         byte[] b = new byte[data.readableBytes()];
         data.readBytes(b);
         return new String(b);
+    }
+
+    public static Http2Settings readSettingsFrame(FrameEntity frameEntity) throws Http2Exception {
+        final  ByteBuf payload = frameEntity.getPayload().copy();
+        final int numSettings = frameEntity.getPayloadLength() / SETTING_ENTRY_LENGTH;
+        final Http2Settings settings = new Http2Settings();
+        for (int index = 0; index < numSettings; ++index) {
+            char id = (char) payload.readUnsignedShort();
+            long value = payload.readUnsignedInt();
+            try {
+                settings.put(id, Long.valueOf(value));
+            } catch (IllegalArgumentException e) {
+                switch (id) {
+                    case SETTINGS_MAX_FRAME_SIZE:
+                        throw connectionError(FRAME_SIZE_ERROR, e, e.getMessage());
+                    case SETTINGS_INITIAL_WINDOW_SIZE:
+                        throw connectionError(FLOW_CONTROL_ERROR, e, e.getMessage());
+                    default:
+                        throw connectionError(PROTOCOL_ERROR, e, e.getMessage());
+                }
+            }
+        }
+        return settings;
+    }
+
+    private static int getPadding(boolean paddingPresent, ByteBuf payload) {
+        final int padding;
+        if (!paddingPresent) {
+            padding = 0;
+        } else {
+            padding = payload.readUnsignedByte() + 1;
+        }
+        return padding;
     }
 
 
@@ -114,7 +137,7 @@ public class Utils {
     }
 
 
-    static class HeadersBlockBuilder {
+    private static class HeadersBlockBuilder {
         private ByteBuf headerBlock;
 
 

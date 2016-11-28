@@ -8,11 +8,15 @@ import java.util.concurrent.TimeUnit;
 
 public class SimpleServerStart {
 
-    private int PORT=8888;
+    public SimpleServerStart (int port){
+        this.port = port;
+    }
+
+    private int port=8888;
     private Server server;
 
     private void start() throws Exception{
-        server = NettyServerBuilder.forPort(PORT).addService(new SimpleServer().bindService()).build();
+        server = NettyServerBuilder.forPort(port).addService(new SimpleServer().bindService()).build();
         server.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(){
@@ -34,8 +38,10 @@ public class SimpleServerStart {
     }
 
     public static void main(String[] args) throws Exception {
-        final SimpleServerStart simpleServerStart = new SimpleServerStart();
+        final SimpleServerStart simpleServerStart = new SimpleServerStart(8888);
         simpleServerStart.start();
+        final SimpleServerStart simpleServerStart1 = new SimpleServerStart(9999);
+        simpleServerStart1.start();
         TimeUnit.SECONDS.sleep(3000);
     }
 

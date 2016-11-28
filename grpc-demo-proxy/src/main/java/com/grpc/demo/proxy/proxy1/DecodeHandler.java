@@ -1,31 +1,22 @@
 package com.grpc.demo.proxy.proxy1;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 
 
 @ChannelHandler.Sharable
-class DecodeHandler extends ChannelDuplexHandler  {
+public class DecodeHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf byteBuf = (ByteBuf) msg;
         ByteBuf copy = byteBuf.copy();
+        System.out.println(copy);
 
-        byte frameType = byteBuf.getByte(3);
-        System.out.println("frameType:"+frameType);
-        if (frameType== 1) {
-            System.out.println(Utils.readHeadersFrame(ctx,byteBuf.copy()));
-
-        }
-
-        if (frameType == 0) {
-            System.out.println(Utils.readDataFrame(byteBuf.copy()));
-        }
-
-        ctx.fireChannelRead(copy);
+        ctx.writeAndFlush(msg);
+        //ctx.fireChannelRead(msg);
     }
 
     @Override

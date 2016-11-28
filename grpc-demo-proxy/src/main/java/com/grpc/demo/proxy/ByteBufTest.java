@@ -1,5 +1,6 @@
 package com.grpc.demo.proxy;
 
+import com.grpc.demo.proxy.proxy1.Utils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -31,6 +32,8 @@ public class ByteBufTest {
 
         System.out.println(heapBuffer.readableBytes());
         System.out.println(heapBuffer.writableBytes());
+        System.out.println(Utils.formatByteBuf("sss",heapBuffer.copy()));
+        System.out.println(heapBuffer.readUnsignedMedium());
 
     }
 }

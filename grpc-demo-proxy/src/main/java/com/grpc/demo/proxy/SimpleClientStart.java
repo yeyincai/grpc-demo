@@ -14,12 +14,12 @@ public class SimpleClientStart {
     private ManagedChannel managedChannel;
     private int PORT = 8080;
 
-    private void createChannel(){
-        managedChannel = NettyChannelBuilder.forAddress("localhost",PORT).usePlaintext(true).build();
+    private void createChannel() {
+        managedChannel = NettyChannelBuilder.forAddress("localhost", PORT).usePlaintext(true).build();
     }
 
-    private void shutdown(){
-        if(managedChannel!=null){
+    private void shutdown() {
+        if (managedChannel != null) {
             try {
                 managedChannel.shutdown().awaitTermination(2, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
@@ -33,20 +33,8 @@ public class SimpleClientStart {
         simpleClientStart.createChannel();
         SimpleServiceGrpc.SimpleServiceBlockingStub simpleServiceStub = SimpleServiceGrpc.newBlockingStub(simpleClientStart.managedChannel);
 
-        for (int i = 0; i < 2; i++) {
-            new Thread(()->{
-                while (true) {
-                    SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-simple-demo").build());
-                    System.out.println("response:" + sayHelloResponse.getResult());
-                    try {
-                        TimeUnit.SECONDS.sleep(2);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-        }
-
+        SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-simple-demo").build());
+        System.out.println("response:" + sayHelloResponse.getResult());
 
 
     }

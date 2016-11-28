@@ -11,11 +11,10 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  */
 public class HexDumpProxy {
     private static final int LOCAL_PORT = 8080;
-    private static final String REMOTE_HOST = "127.0.0.1";
-    private static final int REMOTE_PORT = 8888;
+
 
     public static void main(String[] args) throws Exception {
-        System.err.println("Proxying *:" + LOCAL_PORT + " to " + REMOTE_HOST + ':' + REMOTE_PORT + " ...");
+        System.err.println("Proxying *:" + LOCAL_PORT );
 
         // Configure the bootstrap.
         EventLoopGroup bossGroup = new NioEventLoopGroup(8);
@@ -24,8 +23,7 @@ public class HexDumpProxy {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-
-                    .childHandler(new HexDumpProxyInitializer(REMOTE_HOST, REMOTE_PORT))
+                    .childHandler(new HexDumpProxyInitializer())
                     .childOption(ChannelOption.AUTO_READ, false)
                     .bind(LOCAL_PORT).sync().channel().closeFuture().sync();
         } finally {
