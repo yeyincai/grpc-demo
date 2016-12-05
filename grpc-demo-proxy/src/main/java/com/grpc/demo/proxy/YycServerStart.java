@@ -6,9 +6,9 @@ import io.grpc.netty.NettyServerBuilder;
 
 import java.util.concurrent.TimeUnit;
 
-public class SimpleServerStart {
+public class YycServerStart {
 
-    public SimpleServerStart (int port){
+    public YycServerStart(int port){
         this.port = port;
     }
 
@@ -16,14 +16,14 @@ public class SimpleServerStart {
     private Server server;
 
     private void start() throws Exception{
-        server = NettyServerBuilder.forPort(port).addService(new SimpleServer().bindService()).build();
+        server = NettyServerBuilder.forPort(port).addService(new YycServer().bindService()).build();
         server.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(){
             @Override
             public void  run(){
                 System.err.println("*** shutting down gRPC server since JVM is shutting down");
-                SimpleServerStart.this.stop();
+                YycServerStart.this.stop();
                 System.err.println("*** server shut down");
             }
         });
@@ -38,10 +38,10 @@ public class SimpleServerStart {
     }
 
     public static void main(String[] args) throws Exception {
-        final SimpleServerStart simpleServerStart = new SimpleServerStart(8889);
+        final YycServerStart simpleServerStart = new YycServerStart(9999);
         simpleServerStart.start();
 
-        final SimpleServerStart simpleServerStart1 = new SimpleServerStart(8888);
+        final YycServerStart simpleServerStart1 = new YycServerStart(9998);
         simpleServerStart1.start();
         TimeUnit.SECONDS.sleep(3000);
     }

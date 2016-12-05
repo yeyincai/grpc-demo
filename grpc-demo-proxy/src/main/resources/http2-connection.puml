@@ -1,0 +1,20 @@
+@startuml
+title : http2交互过程
+
+alt 握手
+client -> proxy: outBound(SETTINGS: ack=false, settings={ENABLE_PUSH=0, MAX_CONCURRENT_STREAMS=0, INITIAL_WINDOW_SIZE=1048576})
+client --> proxy: outBound(WINDOW_UPDATE: streamId=0, windowSizeIncrement=983041)
+
+client <-- proxy: inBound (SETTINGS: ack=false, settings={MAX_CONCURRENT_STREAMS=2147483647, INITIAL_WINDOW_SIZE=1048576})
+client --> proxy: outBound (SETTINGS: ack=true)
+
+client <-- proxy: inBound ( WINDOW_UPDATE: streamId=0, windowSizeIncrement=983041)
+client <-- proxy: inBound (SETTINGS: ack=true)
+end
+
+client -> proxy: outBound(HEADERS: streamId=3, headers=GrpcHttp2Headers[])
+client --> proxy: outBound(DATA: streamId=3, padding=0, endStream=true, length=23, bytes=00000000120a10677270632d73696d706c652d64656d6f)
+client <-- proxy: inBound (HEADERS: streamId=3, headers=GrpcHttp2Headers[])
+client <-- proxy: inBound (DATA: streamId=3, padding=0, endStream=true, length=23, bytes=00000000120a10677270632d73696d706c652d64656d6f)
+
+@enduml

@@ -31,10 +31,12 @@ public class SimpleClientStart {
     public static void main(String[] args) throws InterruptedException {
         SimpleClientStart simpleClientStart = new SimpleClientStart();
         simpleClientStart.createChannel();
-        SimpleServiceGrpc.SimpleServiceBlockingStub simpleServiceStub = SimpleServiceGrpc.newBlockingStub(simpleClientStart.managedChannel);
+        /************************/
 
-        SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-simple-demo").build());
-        System.out.println("response:" + sayHelloResponse.getResult());
+            SimpleServiceGrpc.SimpleServiceBlockingStub simpleServiceStub = SimpleServiceGrpc.newBlockingStub(simpleClientStart.managedChannel);
+            SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-simple-demo").build());
+            System.out.println("response:" + sayHelloResponse.getResult());
+            simpleClientStart.managedChannel.shutdown();
 
 
     }
