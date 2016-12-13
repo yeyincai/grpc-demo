@@ -21,6 +21,8 @@ public class HexDumpProxy {
 
     public static void main(String[] args) throws Exception {
 
+        InitChannel.InitChannel();
+
         // Configure the bootstrap.
         EventLoopGroup bossGroup = new NioEventLoopGroup(nThreads);
         EventLoopGroup workerGroup = new NioEventLoopGroup(nThreads);

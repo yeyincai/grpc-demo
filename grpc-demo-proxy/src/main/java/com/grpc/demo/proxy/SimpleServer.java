@@ -11,9 +11,9 @@ public class SimpleServer extends SimpleServiceGrpc.SimpleServiceImplBase{
     @Override
     public void sayHello(com.google.protobuf.StringValue request,
                          io.grpc.stub.StreamObserver<com.yyc.grpc.contract.SayHelloResponse> responseObserver) {
-        String result =request.getValue().concat("hello world");
-        System.out.println(result);
-        SayHelloResponse sayHelloResponse = SayHelloResponse.newBuilder().setResult(result).build();
+
+        System.out.println(request.getValue());
+        SayHelloResponse sayHelloResponse = SayHelloResponse.newBuilder().setResult(request.getValue()).build();
         responseObserver.onNext(sayHelloResponse);
         responseObserver.onCompleted();
     }

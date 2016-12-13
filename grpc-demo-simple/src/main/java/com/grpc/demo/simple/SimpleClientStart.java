@@ -35,6 +35,7 @@ public class SimpleClientStart {
 
         SayHelloResponse sayHelloResponse = simpleServiceStub.sayHello(StringValue.newBuilder().setValue("grpc-simple-demo").build());
         System.out.println("response:"+sayHelloResponse.getResult());
-        simpleClientStart.shutdown();
+        simpleClientStart.managedChannel.shutdownNow();
+        //simpleClientStart.shutdown();
     }
 }

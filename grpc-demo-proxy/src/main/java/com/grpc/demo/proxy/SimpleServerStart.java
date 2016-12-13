@@ -38,11 +38,11 @@ public class SimpleServerStart {
     }
 
     public static void main(String[] args) throws Exception {
-        final SimpleServerStart simpleServerStart = new SimpleServerStart(8889);
+        final SimpleServerStart simpleServerStart = new SimpleServerStart(8888);
         simpleServerStart.start();
 
-        final SimpleServerStart simpleServerStart1 = new SimpleServerStart(8888);
-        simpleServerStart1.start();
+       /* final SimpleServerStart simpleServerStart1 = new SimpleServerStart(8889);
+        simpleServerStart1.start();*/
         TimeUnit.SECONDS.sleep(3000);
     }
 

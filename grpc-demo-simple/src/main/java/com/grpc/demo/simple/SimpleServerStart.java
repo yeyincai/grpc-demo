@@ -36,7 +36,7 @@ public class SimpleServerStart {
     public static void main(String[] args) throws Exception {
         final SimpleServerStart simpleServerStart = new SimpleServerStart();
         simpleServerStart.start();
-        TimeUnit.SECONDS.sleep(30);
+        TimeUnit.SECONDS.sleep(3000);
     }
 
 }
